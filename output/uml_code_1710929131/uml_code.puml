@@ -1,0 +1,58 @@
+@startuml
+
+class sqlite3 <<external>> {
+    +connect(database: str) : Connection
+}
+
+class Connection {
+    +cursor() : Cursor
+    +commit() : None
+    +close() : None
+}
+
+class Cursor {
+    +execute(sql: str, parameters: tuple) : None
+    +fetchone() : tuple
+}
+
+class User {
+    -id: int
+    -username: str
+    -password: str
+    -active: int
+    -failed_attempts: int
+    +__init__(id: int, username: str, password: str, active: int, failed_attempts: int)
+    +get_id() : int
+    +get_username() : str
+    +get_password() : str
+    +is_active() : bool
+    +get_failed_attempts() : int
+    +increment_failed_attempts() : None
+    +deactivate() : None
+}
+
+class ExampleDatabase {
+    -conn: Connection
+    +__init__(database: str)
+    +create_user_table() : None
+    +create_user(username: str, password: str) : None
+    +find_user_by_username(username: str) : User
+    +verify_password(user: User, password: str) : bool
+    +is_active(user: User) : bool
+    +update_failed_attempts(user: User) : None
+    +lock_account(user: User) : None
+    +authenticate(username: str, password: str) : str
+}
+
+class Helper {
+    +generate_otp() : str
+    +send_otp(user: User, otp: str) : None
+}
+
+ExampleDatabase --> sqlite3
+ExampleDatabase --> User
+ExampleDatabase --> Helper
+ExampleDatabase --> Connection
+ExampleDatabase --> Cursor
+
+@enduml
